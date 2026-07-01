@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Test / tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Local config & runtime state
+.env
+.acp_sessions.json
+.acp_sessions.json.tmp
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

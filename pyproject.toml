@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "acp-openai-gateway"
+version = "0.1.0"
+description = "Expose any Agent Client Protocol (ACP) agent behind an OpenAI-compatible /v1 API"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "Vadim Vybornov" }]
+keywords = ["acp", "agent-client-protocol", "openai", "gateway", "goose", "llm", "proxy"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "httpx>=0.27",
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+acp-openai-gateway = "acp_openai_gateway.__main__:main"
+
+# Replace OWNER with your GitHub username/org before publishing.
+[project.urls]
+Homepage = "https://github.com/OWNER/acp-openai-gateway"
+Repository = "https://github.com/OWNER/acp-openai-gateway"
+Issues = "https://github.com/OWNER/acp-openai-gateway/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/acp_openai_gateway"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

@@ -1,0 +1,38 @@
+# Example: run the gateway in front of an ACP agent, with Open WebUI on top.
+#
+#   gateway ── ACP /acp ──►  your agent (e.g. `goose serve` on :3000)
+#   open-webui ── OpenAI /v1 ──►  gateway
+#
+# Copy to docker-compose.yml and adjust ACP_URL to point at your agent. Here the
+# agent is assumed to be reachable as `goose:3000` on a shared docker network.
+
+services:
+  gateway:
+    build: .
+    # or: image: ghcr.io/OWNER/acp-openai-gateway:latest
+    restart: unless-stopped
+    environment:
+      - ACP_URL=http://goose:3000
+      - ACP_CWD=/workspace
+      - ACP_MODE=auto
+      - GATEWAY_PORT=8000
+      # - GATEWAY_API_KEY=change-me      # require a bearer key from clients
+    ports:
+      - "8000:8000"                       # OpenAI API at http://localhost:8000/v1
+    volumes:
+      - ./state:/state                    # persist the conversation→session map
+    # SESSION_STATE_PATH must live on the mounted volume to survive restarts:
+    # environment: [ ..., "SESSION_STATE_PATH=/state/.acp_sessions.json" ]
+
+  # Optional: a UI that speaks OpenAI /v1.
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    restart: unless-stopped
+    depends_on: [gateway]
+    environment:
+      - OPENAI_API_BASE_URL=http://gateway:8000/v1
+      - OPENAI_API_KEY=change-me          # match GATEWAY_API_KEY (any value if unset)
+      - WEBUI_AUTH=false
+      - AIOHTTP_CLIENT_TIMEOUT=3600        # agent turns can be slow
+    ports:
+      - "4000:8080"                        # UI at http://localhost:4000
