@@ -21,7 +21,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Test suite: unit tests (translation + session logic, incl. Hypothesis
   property tests) and integration tests driving the real `AcpClient` against an
   in-memory fake ACP agent (`httpx.MockTransport`) and the app via FastAPI
-  `TestClient`; ~88% coverage, no network needed. Opt-in `live` marker for a
+  `TestClient`; ~89% coverage, no network needed. Opt-in `live` marker for a
   real agent.
+- Compatibility tests driving the app with the **official OpenAI Python SDK**
+  (via httpx.ASGITransport): non-streaming, streaming, and `models.list()`.
 - Release automation: on a `v*` tag, publish to PyPI (Trusted Publishing) and
   push a GHCR image, with a tag/version guard and a GitHub Release.

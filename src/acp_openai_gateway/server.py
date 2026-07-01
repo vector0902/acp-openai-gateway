@@ -43,6 +43,14 @@ def create_app(
                 await app.state.acp.aclose()
 
     app = FastAPI(title="acp-openai-gateway", version=__version__, lifespan=lifespan)
+    # Pre-populate state for injected deps so the app also works under transports
+    # that don't run the lifespan (e.g. httpx.ASGITransport in tests). The real
+    # path still builds/owns/closes its client in the lifespan above.
+    app.state.settings = settings
+    if acp is not None:
+        app.state.acp = acp
+    if store is not None:
+        app.state.store = store
 
     def require_auth(request: Request) -> None:
         key = settings.gateway_api_key

@@ -33,6 +33,7 @@ dev = [
     "pytest-cov>=5",
     "respx>=0.21",
     "hypothesis>=6",
+    "openai>=1.30",
     "ruff>=0.4",
 ]
 

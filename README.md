@@ -48,6 +48,15 @@ curl -N http://localhost:8000/v1/chat/completions \
 
 Point any OpenAI client at `http://localhost:8000/v1`. For **Open WebUI**, add it under *Admin → Settings → Connections → OpenAI* (or via `OPENAI_API_BASE_URL`); see [`docker-compose.example.yml`](docker-compose.example.yml).
 
+### Clients
+
+The gateway implements the OpenAI **Chat Completions** (`/v1/chat/completions`, streaming + non-streaming) and **Models** (`/v1/models`) endpoints. **Verified** against:
+
+- the **official OpenAI Python SDK** (in CI — streaming, non-streaming, `models.list()`), and
+- **Open WebUI** (live, end-to-end against goose).
+
+Any client that speaks those two endpoints and lets you set a custom base URL — LibreChat, Jan, Aider, Continue.dev, the OpenAI SDKs, `curl`, etc. — is expected to work, but those specific apps haven't each been tested. Clients that additionally require `/v1/completions` (legacy), `/v1/embeddings`, or capability metadata will see those endpoints 404 (usually harmless). Reports welcome.
+
 ### Docker
 
 ```bash
