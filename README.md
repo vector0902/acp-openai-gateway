@@ -105,10 +105,18 @@ Built and verified against **goose 1.39.0**'s `goose serve`. The gateway targets
 ```bash
 pip install -e ".[dev]"
 ruff check .
-pytest -q
+pytest -q --cov=acp_openai_gateway --cov-report=term-missing
 ```
 
-Unit tests cover the OpenAI translation and the session-continuity logic (no network). For a live check, run an agent and the gateway, then curl `/v1/chat/completions`.
+Tests are split into `tests/unit/` (pure translation + session logic, incl.
+property-based checks with Hypothesis) and `tests/integration/` (the real
+`AcpClient` driven against an in-memory fake ACP agent via `httpx.MockTransport`,
+and the FastAPI app via `TestClient`). No network or live agent is needed — CI
+runs the whole suite. To also run against a real agent:
+
+```bash
+ACP_LIVE_URL=http://localhost:3000 pytest -m live
+```
 
 ## Limitations
 

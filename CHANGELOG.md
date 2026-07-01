@@ -17,6 +17,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Auto-approval of `session/request_permission` so headless turns never stall.
 - Optional bearer-key auth, configurable model id, thoughts/tool-status
   streaming toggles.
-- Docker image, example compose (agent + gateway + Open WebUI), unit tests, CI.
+- Docker image, example compose (agent + gateway + Open WebUI), and CI.
+- Test suite: unit tests (translation + session logic, incl. Hypothesis
+  property tests) and integration tests driving the real `AcpClient` against an
+  in-memory fake ACP agent (`httpx.MockTransport`) and the app via FastAPI
+  `TestClient`; ~88% coverage, no network needed. Opt-in `live` marker for a
+  real agent.
 - Release automation: on a `v*` tag, publish to PyPI (Trusted Publishing) and
   push a GHCR image, with a tag/version guard and a GitHub Release.

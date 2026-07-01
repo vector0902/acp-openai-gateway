@@ -30,6 +30,9 @@ dependencies = [
 dev = [
     "pytest>=8",
     "pytest-asyncio>=0.23",
+    "pytest-cov>=5",
+    "respx>=0.21",
+    "hypothesis>=6",
     "ruff>=0.4",
 ]
 
@@ -55,3 +58,18 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+addopts = "--strict-markers"
+markers = [
+    "unit: fast, isolated tests with no I/O",
+    "integration: exercise the client/server against an in-memory fake ACP agent",
+    "live: opt-in tests against a real ACP agent (set ACP_LIVE_URL to enable)",
+]
+
+[tool.coverage.run]
+source = ["acp_openai_gateway"]
+branch = true
+omit = ["*/__main__.py"]  # uvicorn process launcher; exercised via the container smoke test
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = ["pragma: no cover", "if __name__ == .__main__.:"]

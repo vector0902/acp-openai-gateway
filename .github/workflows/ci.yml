@@ -21,4 +21,4 @@ jobs:
       - name: Lint
         run: ruff check .
       - name: Test
-        run: pytest -q
+        run: pytest -q --cov=acp_openai_gateway --cov-report=term-missing --cov-fail-under=80

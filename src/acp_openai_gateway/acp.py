@@ -46,6 +46,7 @@ class AcpClient:
         mode: str = "auto",
         connect_timeout: float = 10.0,
         read_timeout: float = 1800.0,
+        client: httpx.AsyncClient | None = None,
     ) -> None:
         self._acp_url = base_url.rstrip("/") + "/acp"
         self._cwd = cwd
@@ -55,8 +56,13 @@ class AcpClient:
         self._cid: str | None = None
         self._attached: set[str] = set()
         self._agent_info: dict = {}
-        timeout = httpx.Timeout(read_timeout, connect=connect_timeout)
-        self._client = httpx.AsyncClient(timeout=timeout)
+        # An injected client (e.g. with an httpx.MockTransport) enables testing
+        # the transport without a live agent.
+        if client is not None:
+            self._client = client
+        else:
+            timeout = httpx.Timeout(read_timeout, connect=connect_timeout)
+            self._client = httpx.AsyncClient(timeout=timeout)
 
     async def aclose(self) -> None:
         await self._client.aclose()

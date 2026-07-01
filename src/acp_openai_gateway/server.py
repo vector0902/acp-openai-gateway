@@ -14,24 +14,33 @@ from .config import Settings, load_settings
 from .sessions import SessionStore
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None,
+    *,
+    acp: AcpClient | None = None,
+    store: SessionStore | None = None,
+) -> FastAPI:
     settings = settings or load_settings()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         app.state.settings = settings
-        app.state.acp = AcpClient(
+        # `acp`/`store` can be injected (tests pass fakes); otherwise build real
+        # ones and take ownership of closing what we created.
+        owns_acp = acp is None
+        app.state.acp = acp or AcpClient(
             settings.acp_url,
             cwd=settings.acp_cwd,
             mode=settings.acp_mode,
             connect_timeout=settings.connect_timeout,
             read_timeout=settings.read_timeout,
         )
-        app.state.store = SessionStore(settings.session_state_path)
+        app.state.store = store or SessionStore(settings.session_state_path)
         try:
             yield
         finally:
-            await app.state.acp.aclose()
+            if owns_acp:
+                await app.state.acp.aclose()
 
     app = FastAPI(title="acp-openai-gateway", version=__version__, lifespan=lifespan)
 
