@@ -64,6 +64,7 @@ markers = [
     "unit: fast, isolated tests with no I/O",
     "integration: exercise the client/server against an in-memory fake ACP agent",
     "live: opt-in tests against a real ACP agent (set ACP_LIVE_URL to enable)",
+    "client: opt-in tests that drive a real external client (e.g. aider) against a running gateway (set CLIENT_SMOKE_BASE_URL)",
 ]
 
 [tool.coverage.run]

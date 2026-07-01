@@ -50,12 +50,19 @@ Point any OpenAI client at `http://localhost:8000/v1`. For **Open WebUI**, add i
 
 ### Clients
 
-The gateway implements the OpenAI **Chat Completions** (`/v1/chat/completions`, streaming + non-streaming) and **Models** (`/v1/models`) endpoints. **Verified** against:
+The gateway implements the OpenAI **Chat Completions** (`/v1/chat/completions`, streaming + non-streaming) and **Models** (`/v1/models`) endpoints.
 
-- the **official OpenAI Python SDK** (in CI — streaming, non-streaming, `models.list()`), and
-- **Open WebUI** (live, end-to-end against goose).
+**Verified** — a full chat round-trip through the gateway:
 
-Any client that speaks those two endpoints and lets you set a custom base URL — LibreChat, Jan, Aider, Continue.dev, the OpenAI SDKs, `curl`, etc. — is expected to work, but those specific apps haven't each been tested. Clients that additionally require `/v1/completions` (legacy), `/v1/embeddings`, or capability metadata will see those endpoints 404 (usually harmless). Reports welcome.
+- **official OpenAI Python SDK** — streaming, non-streaming, `models.list()` (in CI, via `httpx.ASGITransport`)
+- **Aider** — one-shot CLI run returns the agent's reply (gated test `pytest -m client`; see [`scripts/smoke_clients.sh`](scripts/smoke_clients.sh))
+- **Open WebUI** — live, end-to-end against goose
+
+**Partially verified:**
+
+- **LibreChat** — recognized as a custom endpoint and successfully fetches the model list from `/v1/models`; a full chat wasn't automated (its version-specific chat API), so it's not yet in the fully-verified list.
+
+**Expected to work** (speak the same two endpoints; not individually tested): Jan, Continue.dev, LlamaIndex/LangChain, the Vercel AI SDK, `curl`, and most OpenAI-compatible tools. Clients that additionally require `/v1/completions` (legacy), `/v1/embeddings`, or capability metadata will see those endpoints 404 (usually harmless). Reports welcome.
 
 ### Docker
 
