@@ -26,8 +26,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Compatibility tests driving the app with the **official OpenAI Python SDK**
   (via httpx.ASGITransport): non-streaming, streaming, and `models.list()`.
 - Gated `client` smoke test (`pytest -m client`) + `scripts/smoke_clients.sh`
-  that drive a real **Aider** CLI run through the gateway. Verified clients:
-  OpenAI SDK, Aider, Open WebUI. LibreChat is partially verified (custom
-  endpoint recognized + model discovery; chat not automated).
+  that drive a real **Aider** CLI run through the gateway, and
+  `scripts/smoke_librechat.sh` that drives a full chat through a real
+  **LibreChat** instance. Verified clients (full chat round-trip): OpenAI SDK,
+  Aider, LibreChat, Open WebUI — the gateway needed no client-specific code.
 - Release automation: on a `v*` tag, publish to PyPI (Trusted Publishing) and
   push a GHCR image, with a tag/version guard and a GitHub Release.

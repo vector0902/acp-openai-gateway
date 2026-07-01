@@ -56,11 +56,10 @@ The gateway implements the OpenAI **Chat Completions** (`/v1/chat/completions`, 
 
 - **official OpenAI Python SDK** — streaming, non-streaming, `models.list()` (in CI, via `httpx.ASGITransport`)
 - **Aider** — one-shot CLI run returns the agent's reply (gated test `pytest -m client`; see [`scripts/smoke_clients.sh`](scripts/smoke_clients.sh))
+- **LibreChat** — configured as a custom endpoint; a message sent through LibreChat's API reaches the gateway and the agent's reply comes back (see [`scripts/smoke_librechat.sh`](scripts/smoke_librechat.sh))
 - **Open WebUI** — live, end-to-end against goose
 
-**Partially verified:**
-
-- **LibreChat** — recognized as a custom endpoint and successfully fetches the model list from `/v1/models`; a full chat wasn't automated (its version-specific chat API), so it's not yet in the fully-verified list.
+The gateway needed no LibreChat-specific code: it's standard OpenAI, and LibreChat's custom-endpoint chat posts a standard request to it.
 
 **Expected to work** (speak the same two endpoints; not individually tested): Jan, Continue.dev, LlamaIndex/LangChain, the Vercel AI SDK, `curl`, and most OpenAI-compatible tools. Clients that additionally require `/v1/completions` (legacy), `/v1/embeddings`, or capability metadata will see those endpoints 404 (usually harmless). Reports welcome.
 
