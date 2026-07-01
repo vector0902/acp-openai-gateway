@@ -51,6 +51,11 @@ Point any OpenAI client at `http://localhost:8000/v1`. For **Open WebUI**, add i
 ### Docker
 
 ```bash
+# published image (after a release):
+docker run --rm -p 8000:8000 -e ACP_URL=http://host.docker.internal:3000 \
+  ghcr.io/OWNER/acp-openai-gateway:latest
+
+# or build locally:
 docker build -t acp-openai-gateway .
 docker run --rm -p 8000:8000 -e ACP_URL=http://host.docker.internal:3000 acp-openai-gateway
 ```

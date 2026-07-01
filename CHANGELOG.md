@@ -18,3 +18,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Optional bearer-key auth, configurable model id, thoughts/tool-status
   streaming toggles.
 - Docker image, example compose (agent + gateway + Open WebUI), unit tests, CI.
+- Release automation: on a `v*` tag, publish to PyPI (Trusted Publishing) and
+  push a GHCR image, with a tag/version guard and a GitHub Release.
