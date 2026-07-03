@@ -40,11 +40,10 @@ dev = [
 [project.scripts]
 acp-openai-gateway = "acp_openai_gateway.__main__:main"
 
-# Replace OWNER with your GitHub username/org before publishing.
 [project.urls]
-Homepage = "https://github.com/OWNER/acp-openai-gateway"
-Repository = "https://github.com/OWNER/acp-openai-gateway"
-Issues = "https://github.com/OWNER/acp-openai-gateway/issues"
+Homepage = "https://github.com/vadim-vyb/acp-openai-gateway"
+Repository = "https://github.com/vadim-vyb/acp-openai-gateway"
+Issues = "https://github.com/vadim-vyb/acp-openai-gateway/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/acp_openai_gateway"]

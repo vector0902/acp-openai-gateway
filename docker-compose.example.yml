@@ -9,7 +9,7 @@
 services:
   gateway:
     build: .
-    # or: image: ghcr.io/OWNER/acp-openai-gateway:latest
+    # or: image: ghcr.io/vadim-vyb/acp-openai-gateway:latest
     restart: unless-stopped
     environment:
       - ACP_URL=http://goose:3000

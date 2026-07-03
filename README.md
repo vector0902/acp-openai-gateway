@@ -96,7 +96,7 @@ The gateway needed no LibreChat-specific code: it's standard OpenAI, and LibreCh
 ```bash
 # published image (after a release):
 docker run --rm -p 8000:8000 -e ACP_URL=http://host.docker.internal:3000 \
-  ghcr.io/OWNER/acp-openai-gateway:latest
+  ghcr.io/vadim-vyb/acp-openai-gateway:latest
 
 # or build locally:
 docker build -t acp-openai-gateway .

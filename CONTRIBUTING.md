@@ -31,7 +31,7 @@ publishes to PyPI and GHCR.
 2. Tag and push: `git tag v0.1.0 && git push origin v0.1.0`.
    The workflow verifies the tag equals the `pyproject.toml` version, builds
    sdist+wheel, publishes to PyPI, attaches artifacts to a GitHub Release, and
-   pushes `ghcr.io/OWNER/acp-openai-gateway:{version,latest}`.
+   pushes `ghcr.io/vadim-vyb/acp-openai-gateway:{version,latest}`.
 
 **One-time setup:** enable PyPI **Trusted Publishing** for this repo (Publishing →
 add a pending publisher: workflow `release.yml`, environment `release`) — no
