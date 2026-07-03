@@ -18,6 +18,23 @@ OpenAI client ──► /v1/chat/completions ──►  acp-openai-gateway  ─�
 
 > **Status:** beta. Verified end-to-end against **goose 1.39.0**. ACP's HTTP transport is still evolving and partly undocumented — see [Compatibility](#compatibility).
 
+## Overview
+
+A growing number of AI agents (goose, and other tools adopting ACP) run as a local or remote service that speaks the **Agent Client Protocol** — a rich, session-based protocol designed for editors and IDEs. That's great for those integrations, but it means the huge ecosystem of **OpenAI-compatible** software — chat UIs, CLIs, coding assistants, and the official SDKs — can't talk to them, because all of that software only knows how to call OpenAI's simple REST API.
+
+This project is the **adapter in between**. It runs a small HTTP server that looks exactly like OpenAI (`/v1/chat/completions`, `/v1/models`, streaming and all), and behind the scenes drives the agent over ACP. To the agent it looks like a normal client; to your tools the agent looks like just another model. Nothing about the agent changes.
+
+Two things make it more than a dumb proxy: it advertises the agent's real name/version as the model, and it bridges OpenAI's *stateless* request model onto the agent's *stateful* session — so multi-turn chats keep the agent's memory and tool state (and survive restarts).
+
+**Use it when** you have an ACP agent and want to:
+
+- put it behind a chat UI (Open WebUI, LibreChat, …) without writing any UI code,
+- call it from the OpenAI SDKs / LangChain / LlamaIndex or any existing OpenAI integration,
+- drop it into a coding tool that accepts a custom OpenAI endpoint (Aider, Continue, …),
+- or expose several agents uniformly, each as its own OpenAI endpoint.
+
+**You don't need it if** your agent already offers an OpenAI-compatible API, or you're happy using its native ACP client (e.g. Zed/JetBrains talking to goose directly). It's a translation layer, not an agent or a model host — it needs a running ACP agent to point at, and it adds no reasoning of its own.
+
 ## Quickstart
 
 ### Run the agent (example: goose)
