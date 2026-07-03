@@ -33,7 +33,18 @@ Two things make it more than a dumb proxy: it advertises the agent's real name/v
 - drop it into a coding tool that accepts a custom OpenAI endpoint (Aider, Continue, …),
 - or expose several agents uniformly, each as its own OpenAI endpoint.
 
-**You don't need it if** your agent already offers an OpenAI-compatible API, or you're happy using its native ACP client (e.g. Zed/JetBrains talking to goose directly). It's a translation layer, not an agent or a model host — it needs a running ACP agent to point at, and it adds no reasoning of its own.
+**You don't need it if** your agent already offers an OpenAI-compatible API, or you're happy using its native ACP client (e.g. Zed/JetBrains driving a local goose). It's a translation layer, not an agent or a model host — it needs a running ACP agent to point at, and it adds no reasoning of its own.
+
+### This vs. a native ACP client (stdio vs. remote)
+
+Editors like Zed and JetBrains speak ACP as **JSON-RPC over stdio** — they *spawn the agent as a local subprocess*. ACP's HTTP transport for **remote** agents is still a work in progress. That leaves two different bridging problems, and this project only solves one of them:
+
+| You have… | …and want to reach | Use |
+|---|---|---|
+| An **OpenAI-compatible** client (chat UI, SDK, coding tool) | a remote ACP agent (over HTTP) | **this gateway** ✅ |
+| A **stdio-only ACP** editor (bare Zed/JetBrains ACP) | a remote ACP agent | a *stdio↔HTTP ACP* proxy — **not** this gateway |
+
+In short: the gateway's client-facing side is **OpenAI, not stdio ACP**, and its agent-facing side is **ACP-over-HTTP, not stdio**. So it makes a *remote* agent reachable by the *OpenAI ecosystem* — including letting an IDE that supports a custom OpenAI endpoint use a remote agent through that path, instead of ACP's local-subprocess one. It does **not** let a stdio-only ACP editor connect to a remote agent; that needs the other bridge.
 
 ## Quickstart
 
