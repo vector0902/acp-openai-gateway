@@ -14,12 +14,20 @@ class Settings(BaseSettings):
 
     # ── upstream ACP agent ──────────────────────────────────────────────────
     acp_url: str = "http://localhost:3000"
-    """Base URL of the ACP agent. The endpoint used is ``{acp_url}/acp``."""
+    """Base URL of the ACP agent. The endpoint used is ``{acp_url}/acp``
+    (goose) or ``{acp_url}/api/v1/acp`` (cbwb)."""
+    acp_provider: str = "goose"
+    """Transport dialect: ``goose`` (streamable-HTTP + GET SSE channel, header
+    ``acp-connection-id``) or ``cbwb`` (POST /api/v1/acp/connect →
+    {connectionId, sessionToken}, request-scoped SSE, headers
+    acp-connection-id + acp-session-token + X-CodeBuddy-Request)."""
     acp_cwd: str = "/workspace"
     """Working directory handed to ``session/new``."""
     acp_mode: str = "auto"
     """Session mode when the agent supports it (e.g. goose: auto | smart_approve |
-    approve | chat). ``auto`` keeps tools enabled without stalling on permission."""
+    approve | chat; cbwb: default | acceptEdits | plan | auto | dontAsk |
+    bypassPermissions | fullAccess | delegate). ``auto`` keeps tools enabled
+    without stalling on permission."""
 
     # ── HTTP server ─────────────────────────────────────────────────────────
     gateway_host: str = "0.0.0.0"

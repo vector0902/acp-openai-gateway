@@ -39,6 +39,43 @@ def content_text(content: Any) -> str:
     return "" if content is None else str(content)
 
 
+def content_blocks(content: Any) -> list[dict]:
+    """Map OpenAI message `content` to ACP prompt content blocks.
+
+    Text parts become ``{"type": "text", "text": ...}``. Base64 image parts
+    (OpenAI ``image_url`` with a ``data:image/...;base64,...`` URL) become
+    cbwb ACP's flat image block ``{"type": "image", "data": <b64>,
+    "mimeType": "image/png"}`` (verified against cbwb's ACP validator:
+    image blocks are flat, NOT the ACP-standard ``source`` nesting).
+    """
+    if isinstance(content, str):
+        return [{"type": "text", "text": content}]
+    blocks: list[dict] = []
+    for p in content if isinstance(content, list) else []:
+        if not isinstance(p, dict):
+            if isinstance(p, str):
+                blocks.append({"type": "text", "text": p})
+            continue
+        ptype = p.get("type")
+        if ptype == "text":
+            t = p.get("text")
+            if t:
+                blocks.append({"type": "text", "text": t})
+        elif ptype in ("image_url", "image"):
+            url = ""
+            src = p.get("image_url") or p.get("source") or {}
+            if isinstance(src, dict):
+                url = src.get("url") or src.get("data") or ""
+            if not url and isinstance(p.get("image_url"), str):
+                url = p["image_url"]
+            if url.startswith("data:image/"):
+                # data:image/<mime>;base64,<payload>
+                header, _, payload = url.partition(",")
+                mime = header[len("data:"):].split(";")[0]
+                blocks.append({"type": "image", "data": payload, "mimeType": mime})
+    return blocks
+
+
 def _normalize(messages: list[dict]) -> list[dict]:
     return [{"role": m.get("role"), "content": content_text(m.get("content"))} for m in messages]
 

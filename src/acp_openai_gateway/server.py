@@ -11,7 +11,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from . import __version__, translate
 from .acp import AcpClient
 from .config import Settings, load_settings
-from .sessions import SessionStore
+from .sessions import SessionStore, content_blocks
 
 
 def create_app(
@@ -32,6 +32,7 @@ def create_app(
             settings.acp_url,
             cwd=settings.acp_cwd,
             mode=settings.acp_mode,
+            provider=settings.acp_provider,
             connect_timeout=settings.connect_timeout,
             read_timeout=settings.read_timeout,
         )
@@ -102,15 +103,29 @@ def create_app(
         if sid is not None and not await acp.ensure_attached(sid):
             await store.forget(sid)
             sid = None
+        # Prompt blocks: for cbwb use structured content (supports image
+        # blocks); goose/other keep the plain-text path.
+        is_cbwb = settings.acp_provider == "cbwb"
         if sid is None:
             sid = await acp.new_session()
-            # cold branch: seed with full transcript so context isn't lost
-            if prior and settings.cold_seed_history:
+            if is_cbwb:
+                last_content = (messages[-1] or {}).get("content")
+                send_blocks = content_blocks(last_content)
+                send_text = ""
+            elif prior and settings.cold_seed_history:
                 send_text = translate.flatten_transcript(messages)
+                send_blocks = None
             else:
                 send_text = translate.last_user_text(messages)
+                send_blocks = None
         else:
-            send_text = translate.last_user_text(messages)
+            if is_cbwb:
+                last_content = (messages[-1] or {}).get("content")
+                send_blocks = content_blocks(last_content)
+                send_text = ""
+            else:
+                send_text = translate.last_user_text(messages)
+                send_blocks = None
 
         cid = translate.new_completion_id()
 
@@ -119,7 +134,7 @@ def create_app(
             persisting the continuation mapping. `kind` is 'message' or 'error'."""
             reply_parts: list[str] = []
             thinking = False
-            async for ev in acp.prompt(sid, send_text):
+            async for ev in acp.prompt(sid, send_text, blocks=send_blocks):
                 kind = ev["type"]
                 if kind == "message":
                     if thinking:
